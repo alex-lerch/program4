@@ -1,5 +1,5 @@
 // Program to generate a random maze
-// by Mary Elaine Califf and
+// by Mary Elaine Califf and Alex Lerch
 
 #include <string>
 #include <iostream>

@@ -1,11 +1,14 @@
 // Class to generate a random maze using disjoint sets and print it in ASCII format to a file
-// By Mary Elaine Califf and
+// By Mary Elaine Califf and Alex Lerch
 #ifndef MAZE_H
 #define MAZE_H
 
 #include <iostream>
 #include <fstream>
 using namespace std;
+
+typedef int direction;
+typedef int cell;
 
 struct CellWalls
 {
@@ -43,6 +46,18 @@ public:
 private:
     // private helper method to copy the data from another Maze object
     void copy(const Maze &orig);
+
+    // find a random cell within the maze
+    cell findRandomCell();
+
+    // find a direction
+    direction findDirection();
+
+    // gets a valid neighbor
+    cell getNeighbor(cell currentCell, direction directionFromCurrentCell);
+
+    // checks for whether the cell is the first one in the row. true if it is, false otherwise
+    bool isBeginningOfRow(cell currentCell);
 };
 
 #endif
