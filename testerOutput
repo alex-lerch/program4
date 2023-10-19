@@ -1,0 +1,26 @@
+original array
+-1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+
+after first 3 doUnions 
+-1 -1 -4 2 2 4 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 
+
+after 9,15
+14 -4 -4 2 2 4 -1 1 -1 13 -1 -1 -1 -3 1 13 
+
+after 11,13
+14 -4 -4 2 2 4 13 1 -1 13 -1 6 -1 -5 1 13 
+
+0 set label: 1
+11 set label: 13
+5 set label: 2
+result of 14,2 0
+result of 10,12 0
+result of 8,12 0
+after 8,12
+1 -8 1 2 2 2 13 1 10 13 -3 13 10 -5 1 13 
+
+result of 5,8 0
+result of 15,0 1
+
+Final version
+1 -16 1 2 2 1 13 1 10 13 1 13 10 1 1 13 
