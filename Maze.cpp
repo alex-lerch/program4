@@ -31,36 +31,38 @@ Maze &Maze::operator=(const Maze &rhs)
 
 void Maze::generateMaze()
 {
+
     int numCells = numRows * numColumns;
     DisjointSet mySet(numCells);
     bool mazeComplete = false;
 
-    // find random cell
-    cell currentCell = findRandomCell();
+    while (!mazeComplete) {
+        // find random cell
+        cell currentCell = findRandomCell();
 
-    // randomly select a neighbor of currentCell
-    direction directionFromCurrentCell = findRandomDirection();
+        // randomly select a neighbor of currentCell
+        direction directionFromCurrentCell = findRandomDirection();
 
-    // gets the correct neighbor of the currentCell and updates directionFromCurrentCell
-    cell neighbor = getNeighbor(currentCell, directionFromCurrentCell);
+        // gets the correct neighbor of the currentCell and updates directionFromCurrentCell
+        cell neighbor = getNeighbor(currentCell, directionFromCurrentCell);
 
-    // todo: implement removing walls without worrying about doing it multiple times or completing the maze, git commit once achieved
-    // if the two cells are not in the same set then remove wall between them and then union them then check for maze completed
-    if (! (mySet.find(currentCell) == mySet.find(neighbor)) ) {
+        // if the two cells are not in the same set then remove wall between them and then union them then check for maze completed
+        if (! (mySet.find(currentCell) == mySet.find(neighbor)) ) {
 
-        // remove wall between two chosen cells
-        removeSharedWall(currentCell, directionFromCurrentCell, neighbor);
+            // remove wall between two chosen cells
+            removeSharedWall(currentCell, directionFromCurrentCell, neighbor);
 
-        // union cells in the disjoint set then break out of generateMaze function if the maze is completed
-        if (mySet.doUnion(currentCell, neighbor)) { // if the maze has been completed
-            return;
+            // union cells in the disjoint set then break out of generateMaze function if the maze is completed
+            if (mySet.doUnion(currentCell, neighbor)) { // if the maze has been completed
+                mazeComplete = true;
+            }
+
         }
-
     }
     
 
     // asl debug
-    std::cout << "cell chosen: " << currentCell << "\ndirection chosen: " << directionFromCurrentCell << "\nchosen neighbor: " << neighbor << std::endl;
+    //std::cout << "cell chosen: " << currentCell << "\ndirection chosen: " << directionFromCurrentCell << "\nchosen neighbor: " << neighbor << std::endl;
     print(std::cout);
     std::cout << "checking disjoint set: ";
     mySet.printArrayValues(std::cout);
