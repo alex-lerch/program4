@@ -1,10 +1,11 @@
 // Implementation of Maze class
-// By Mary Elaine Califf and
+// By Mary Elaine Califf and Alex Lerch
 
 #include "Maze.h"
 #include "DisjointSet.h"
 using namespace std;
 
+// define the directions we could take within the maze
 #define LEFT 0
 #define DOWN 1
 #define RIGHT 2
@@ -29,18 +30,24 @@ Maze &Maze::operator=(const Maze &rhs)
     return *this;
 }
 
+
+// generates the maze by randomly knocking down walls
 void Maze::generateMaze()
 {
-
+    // calculate the number of cells in the maze
     int numCells = numRows * numColumns;
+
+    // create the disjoint set to keep track of when all cells are connected
     DisjointSet mySet(numCells);
+
+    // used to help determine when the maze is completed
     bool mazeComplete = false;
 
-    while (!mazeComplete) {
+    while (!mazeComplete) { // while the maze has not yet been completed
         // find random cell
         cell currentCell = findRandomCell();
 
-        // randomly select a neighbor of currentCell
+        // randomly find a direction that will be used to help find a neighbor of currentCell
         direction directionFromCurrentCell = findRandomDirection();
 
         // gets the correct neighbor of the currentCell and updates directionFromCurrentCell
@@ -52,7 +59,7 @@ void Maze::generateMaze()
             // remove wall between two chosen cells
             removeSharedWall(currentCell, directionFromCurrentCell, neighbor);
 
-            // union cells in the disjoint set then break out of generateMaze function if the maze is completed
+            // union cells in the disjoint set then update mazeComplete if the maze has been completed
             if (mySet.doUnion(currentCell, neighbor)) { // if the maze has been completed
                 mazeComplete = true;
             }
@@ -109,20 +116,26 @@ int Maze::findRandomCell() {
 }
 
 
-// find a direction
+// find a random direction
 int Maze::findRandomDirection() {
     return rand() % 4;
 }
 
 
-// gets a valid neighbor
+// gets a valid neighbor of currentCell and updates the directionFromCurrentCell if necessary
 cell Maze::getNeighbor(cell currentCell, direction &directionFromCurrentCell) {
+
+    // define used variables
     cell leftCell = currentCell - 1;
     cell rightCell = currentCell + 1;
     cell downCell = currentCell + numColumns;
     cell upCell = currentCell - numColumns;
     int numCells = numColumns * numRows;
+
+    // select the neighbor based on the randomly selected direction
     switch(directionFromCurrentCell) {
+
+        // if the direction is left
         case LEFT:
             if (isBeginningOfRow(currentCell)) {
                 // update direction
@@ -135,8 +148,9 @@ cell Maze::getNeighbor(cell currentCell, direction &directionFromCurrentCell) {
             }
             break;
 
+        // if the direction is down
         case DOWN:
-            if (downCell > (numCells - 1)) {
+            if (downCell > (numCells - 1)) { // if the cell below the currentCell is not part of the maze
                 // update direction
                 directionFromCurrentCell = UP;
                 // return the correct neighbor
@@ -147,6 +161,7 @@ cell Maze::getNeighbor(cell currentCell, direction &directionFromCurrentCell) {
             }
             break;
 
+        // if the direction is right
         case RIGHT:
             if (isBeginningOfRow(rightCell)) {
                 // update direction
@@ -159,8 +174,9 @@ cell Maze::getNeighbor(cell currentCell, direction &directionFromCurrentCell) {
             }
             break;
 
+        // if the direction is up
         case UP:
-            if (upCell < 0) {
+            if (upCell < 0) { // if the cell above currentCell is not part of the maze
                 // update direction
                 directionFromCurrentCell = DOWN;
                 // return correct neighbor
@@ -171,7 +187,9 @@ cell Maze::getNeighbor(cell currentCell, direction &directionFromCurrentCell) {
             }
             break;
     }
-    return currentCell;
+    
+    // return invalid number
+    return -1;
 }
 
 // checks for whether the cell is the first one in the row. true if it is, false otherwise
@@ -180,18 +198,26 @@ bool Maze::isBeginningOfRow(cell currentCell) {
 }
 
 
-// removes the shared wall between the two cells
+// removes the shared wall between currentCell and neighbor
 void Maze::removeSharedWall(cell currentCell, direction directionFromCurrentCell, cell neighbor) {
+
     switch(directionFromCurrentCell) {
+        // to remove wall to the left of currentCell, remove neighbor's east wall
         case LEFT:
             mazeWalls[neighbor].east = false;
             break;
+
+        // remove currentCell's south wall
         case DOWN:
             mazeWalls[currentCell].south = false;
             break;
+
+        // remove currentCell's east wall
         case RIGHT:
             mazeWalls[currentCell].east = false;
             break;
+
+        // to remove wall above currentCell, remove neighbor's south wall
         case UP:
             mazeWalls[neighbor].south = false;
             break;

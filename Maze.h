@@ -7,8 +7,8 @@
 #include <fstream>
 using namespace std;
 
-typedef int direction;
-typedef int cell;
+typedef int direction; // represents an int direction indicated from the program 4 notes
+typedef int cell; // represents a cell of the maze
 
 struct CellWalls
 {
