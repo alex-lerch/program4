@@ -47,17 +47,17 @@ void Maze::generateMaze()
         // find random cell
         cell currentCell = findRandomCell();
 
-        // randomly find a direction that will be used to help find a neighbor of currentCell
-        direction directionFromCurrentCell = findRandomDirection();
+        // get the correct direction
+        direction correctDirection = findCorrectDirection(currentCell);
 
-        // gets the correct neighbor of the currentCell and updates directionFromCurrentCell
-        cell neighbor = getNeighbor(currentCell, directionFromCurrentCell);
+        // gets the correct neighbor of the currentCell and updates randomDirectionFromCurrentCell
+        cell neighbor = getNeighbor(currentCell, correctDirection);
 
         // if the two cells are not in the same set then remove wall between them and then union them then check for maze completed
         if (! (mySet.find(currentCell) == mySet.find(neighbor)) ) {
 
             // remove wall between two chosen cells
-            removeSharedWall(currentCell, directionFromCurrentCell, neighbor);
+            removeSharedWall(currentCell, correctDirection, neighbor);
 
             // union cells in the disjoint set then update mazeComplete if the maze has been completed
             if (mySet.doUnion(currentCell, neighbor)) { // if the maze has been completed
@@ -122,69 +122,33 @@ int Maze::findRandomDirection() {
 }
 
 
-// gets a valid neighbor of currentCell and updates the directionFromCurrentCell if necessary
-cell Maze::getNeighbor(cell currentCell, direction &directionFromCurrentCell) {
+// gets a valid neighbor of currentCell and updates the randomDirectionFromCurrentCell if necessary
+cell Maze::getNeighbor(cell currentCell, direction correctDirection) {
 
     // define used variables
-    cell leftCell = currentCell - 1;
-    cell rightCell = currentCell + 1;
-    cell downCell = currentCell + numColumns;
-    cell upCell = currentCell - numColumns;
     int numCells = numColumns * numRows;
 
     // select the neighbor based on the randomly selected direction
-    switch(directionFromCurrentCell) {
+    switch(correctDirection) {
 
         // if the direction is left
         case LEFT:
-            if (isBeginningOfRow(currentCell)) {
-                // update direction
-                directionFromCurrentCell = RIGHT;
-                // return right neighbor
-                return rightCell;
-            }
-            else {
-                return leftCell;
-            }
+            return currentCell - 1;
             break;
 
         // if the direction is down
         case DOWN:
-            if (downCell > (numCells - 1)) { // if the cell below the currentCell is not part of the maze
-                // update direction
-                directionFromCurrentCell = UP;
-                // return the correct neighbor
-                return upCell;
-            }
-            else {
-                return downCell;
-            }
+            return currentCell + numColumns;
             break;
 
         // if the direction is right
         case RIGHT:
-            if (isBeginningOfRow(rightCell)) {
-                // update direction
-                directionFromCurrentCell = LEFT;
-                // return left neighbor
-                return leftCell;
-            }
-            else {
-                return rightCell;
-            }
+            return currentCell + 1;
             break;
 
         // if the direction is up
         case UP:
-            if (upCell < 0) { // if the cell above currentCell is not part of the maze
-                // update direction
-                directionFromCurrentCell = DOWN;
-                // return correct neighbor
-                return downCell;
-            }
-            else {
-                return upCell;
-            }
+            return currentCell - numColumns;
             break;
     }
     
@@ -199,9 +163,9 @@ bool Maze::isBeginningOfRow(cell currentCell) {
 
 
 // removes the shared wall between currentCell and neighbor
-void Maze::removeSharedWall(cell currentCell, direction directionFromCurrentCell, cell neighbor) {
+void Maze::removeSharedWall(cell currentCell, direction randomDirectionFromCurrentCell, cell neighbor) {
 
-    switch(directionFromCurrentCell) {
+    switch(randomDirectionFromCurrentCell) {
         // to remove wall to the left of currentCell, remove neighbor's east wall
         case LEFT:
             mazeWalls[neighbor].east = false;
@@ -222,4 +186,61 @@ void Maze::removeSharedWall(cell currentCell, direction directionFromCurrentCell
             mazeWalls[neighbor].south = false;
             break;
     }
+}
+
+
+direction Maze::findCorrectDirection(cell currentCell) {
+
+    // variables used
+    cell leftCell; // cell to the left of currentCell
+    cell downCell; // cell below the currentCell
+    cell rightCell; // cell to the right of currentCell
+    cell upCell; // cell above currentCell
+    int numCells; // number of cells in the maze
+
+    // get a random direction
+    direction randomDirectionFromCurrentCell = findRandomDirection();
+
+    // select the neighbor based on the randomly selected direction
+    switch(randomDirectionFromCurrentCell) {
+
+        // if the direction is left
+        case LEFT:
+            if (isBeginningOfRow(currentCell)) {
+                // update direction
+                randomDirectionFromCurrentCell = RIGHT;
+            }
+            break;
+
+        // if the direction is down
+        case DOWN:
+            downCell = currentCell + numColumns;
+            numCells = numRows * numColumns;
+            if (downCell > (numCells - 1)) { // if the cell below the currentCell is not part of the maze
+                // update direction
+                randomDirectionFromCurrentCell = UP;
+            }
+            break;
+
+        // if the direction is right
+        case RIGHT:
+            rightCell = currentCell + 1;
+            if (isBeginningOfRow(rightCell)) {
+                // update direction
+                randomDirectionFromCurrentCell = LEFT;
+            }
+            break;
+
+        // if the direction is up
+        case UP:
+            upCell = currentCell - numColumns;
+            if (upCell < 0) { // if the cell above currentCell is not part of the maze
+                // update direction
+                randomDirectionFromCurrentCell = DOWN;
+            }
+            break;
+    }
+    
+    // random direction was correct
+    return randomDirectionFromCurrentCell;
 }
