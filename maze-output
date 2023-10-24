@@ -1,0 +1,8 @@
+cell chosen: 4
+direction chosen: 0
+chosen neighbor: 3
+ _ _ _
+ _|_|_|
+|_ _|_ 
+checking disjoint set: -1 -1 -1 4 -2 -1 
+

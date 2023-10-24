@@ -51,13 +51,16 @@ private:
     cell findRandomCell();
 
     // find a direction
-    direction findDirection();
+    direction findRandomDirection();
 
     // gets a valid neighbor
-    cell getNeighbor(cell currentCell, direction directionFromCurrentCell);
+    cell getNeighbor(cell currentCell, direction &directionFromCurrentCell);
 
     // checks for whether the cell is the first one in the row. true if it is, false otherwise
     bool isBeginningOfRow(cell currentCell);
+
+    // removes the shared wall between the two cells
+    void removeSharedWall(cell currentCell, direction directionFromCurrentCell, cell neighbor);
 };
 
 #endif

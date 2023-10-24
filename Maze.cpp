@@ -39,15 +39,32 @@ void Maze::generateMaze()
     cell currentCell = findRandomCell();
 
     // randomly select a neighbor of currentCell
-    direction directionFromCurrentCell = findDirection();
+    direction directionFromCurrentCell = findRandomDirection();
 
-    // gets the correct neighbor of the currentCell
+    // gets the correct neighbor of the currentCell and updates directionFromCurrentCell
     cell neighbor = getNeighbor(currentCell, directionFromCurrentCell);
 
     // todo: implement removing walls without worrying about doing it multiple times or completing the maze, git commit once achieved
+    // if the two cells are not in the same set then remove wall between them and then union them then check for maze completed
+    if (! (mySet.find(currentCell) == mySet.find(neighbor)) ) {
+
+        // remove wall between two chosen cells
+        removeSharedWall(currentCell, directionFromCurrentCell, neighbor);
+
+        // union cells in the disjoint set then break out of generateMaze function if the maze is completed
+        if (mySet.doUnion(currentCell, neighbor)) { // if the maze has been completed
+            return;
+        }
+
+    }
+    
 
     // asl debug
     std::cout << "cell chosen: " << currentCell << "\ndirection chosen: " << directionFromCurrentCell << "\nchosen neighbor: " << neighbor << std::endl;
+    print(std::cout);
+    std::cout << "checking disjoint set: ";
+    mySet.printArrayValues(std::cout);
+    std::cout << std::endl;
 }
 
 void Maze::print(ostream &outputStream)
@@ -99,13 +116,13 @@ int Maze::findRandomCell() {
 
 
 // find a direction
-int Maze::findDirection() {
+int Maze::findRandomDirection() {
     return rand() % 4;
 }
 
 
 // gets a valid neighbor
-cell Maze::getNeighbor(cell currentCell, direction directionFromCurrentCell) {
+cell Maze::getNeighbor(cell currentCell, direction &directionFromCurrentCell) {
     cell leftCell = currentCell - 1;
     cell rightCell = currentCell + 1;
     cell downCell = currentCell + numColumns;
@@ -114,6 +131,8 @@ cell Maze::getNeighbor(cell currentCell, direction directionFromCurrentCell) {
     switch(directionFromCurrentCell) {
         case LEFT:
             if (isBeginningOfRow(currentCell)) {
+                // update direction
+                directionFromCurrentCell = RIGHT;
                 // return right neighbor
                 return rightCell;
             }
@@ -124,6 +143,9 @@ cell Maze::getNeighbor(cell currentCell, direction directionFromCurrentCell) {
 
         case DOWN:
             if (downCell > (numCells - 1)) {
+                // update direction
+                directionFromCurrentCell = UP;
+                // return the correct neighbor
                 return upCell;
             }
             else {
@@ -133,6 +155,8 @@ cell Maze::getNeighbor(cell currentCell, direction directionFromCurrentCell) {
 
         case RIGHT:
             if (isBeginningOfRow(rightCell)) {
+                // update direction
+                directionFromCurrentCell = LEFT;
                 // return left neighbor
                 return leftCell;
             }
@@ -143,6 +167,9 @@ cell Maze::getNeighbor(cell currentCell, direction directionFromCurrentCell) {
 
         case UP:
             if (upCell < 0) {
+                // update direction
+                directionFromCurrentCell = DOWN;
+                // return correct neighbor
                 return downCell;
             }
             else {
@@ -155,4 +182,23 @@ cell Maze::getNeighbor(cell currentCell, direction directionFromCurrentCell) {
 // checks for whether the cell is the first one in the row. true if it is, false otherwise
 bool Maze::isBeginningOfRow(cell currentCell) {
     return ( (currentCell % numColumns) == 0 );
+}
+
+
+// removes the shared wall between the two cells
+void Maze::removeSharedWall(cell currentCell, direction directionFromCurrentCell, cell neighbor) {
+    switch(directionFromCurrentCell) {
+        case LEFT:
+            mazeWalls[neighbor].east = false;
+            break;
+        case DOWN:
+            mazeWalls[currentCell].south = false;
+            break;
+        case RIGHT:
+            mazeWalls[currentCell].east = false;
+            break;
+        case UP:
+            mazeWalls[neighbor].south = false;
+            break;
+    }
 }
