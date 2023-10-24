@@ -24,6 +24,11 @@ int DisjointSet::find(int objectIndex)
     }
 }
 
+
+// union method joins the sets of object1 and object2
+// Precondition: the objects must NOT be in the same set when union is called
+// Precondition: both parameters must be in the range 0 to numValues-1
+// returns true if all values in the array are now in the same set and false otherwise
 bool DisjointSet::doUnion(int objIndex1, int objIndex2)
 {
     // get the roots of objIndex1 and objIndex2
@@ -57,6 +62,8 @@ bool DisjointSet::doUnion(int objIndex1, int objIndex2)
     return false;
 }
 
+
+// provided for testing purposes
 void DisjointSet::printArrayValues(std::ostream &outputStream)
 {
     for (int i = 0; i < numValues; i++)

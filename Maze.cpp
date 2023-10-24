@@ -59,14 +59,6 @@ void Maze::generateMaze()
 
         }
     }
-    
-
-    // asl debug
-    //std::cout << "cell chosen: " << currentCell << "\ndirection chosen: " << directionFromCurrentCell << "\nchosen neighbor: " << neighbor << std::endl;
-    print(std::cout);
-    std::cout << "checking disjoint set: ";
-    mySet.printArrayValues(std::cout);
-    std::cout << std::endl;
 }
 
 void Maze::print(ostream &outputStream)
@@ -179,6 +171,7 @@ cell Maze::getNeighbor(cell currentCell, direction &directionFromCurrentCell) {
             }
             break;
     }
+    return currentCell;
 }
 
 // checks for whether the cell is the first one in the row. true if it is, false otherwise
